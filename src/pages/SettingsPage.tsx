@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -42,7 +42,8 @@ export function SettingsPage() {
   const QUOTA_LIMIT = 10000;
   const quotaPercent = Math.min(100, (quotaUsed / QUOTA_LIMIT) * 100);
 
-  const handleAddKey = () => {
+  const handleAddKey = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (!newKey || !nickname) {
       toast.error('Please fill in both fields');
       return;
@@ -94,8 +95,8 @@ export function SettingsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
           <Card className="p-8 border-none bg-white dark:bg-slate-900 shadow-xl overflow-hidden relative">
-            <div className="absolute top-0 right-0 p-8 opacity-5"><Key size={120} /></div>
-            <div className="flex justify-between items-center mb-8">
+            <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none"><Key size={120} /></div>
+            <div className="flex justify-between items-center mb-8 relative z-10">
               <h2 className="text-xl font-black italic flex items-center gap-2">
                 <ShieldCheck className="text-indigo-600" size={24} />
                 YouTube API Nodes
