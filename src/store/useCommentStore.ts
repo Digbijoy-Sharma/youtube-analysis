@@ -16,9 +16,11 @@ export const useCommentStore = create<CommentState>((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await axios.post('/api/video/comments', { videoId, apiKey });
-      set({ analysis: response.data, loading: false });
+      const data = response.data;
+      if (!data || typeof data !== 'object' || !data.threads) throw new Error('Received an invalid response from the server.');
+      set({ analysis: data, loading: false });
     } catch (err: any) {
-      set({ error: err.response?.data?.error || 'Failed to analyze comments', loading: false });
+      set({ error: err.response?.data?.error || err.message || 'Failed to analyze comments', loading: false });
     }
   }
 }));

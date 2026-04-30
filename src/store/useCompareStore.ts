@@ -24,9 +24,11 @@ export const useCompareStore = create<CompareState>((set) => ({
           axios.post('/api/video/analyze', { videoUrl: url, apiKey })
         )
       );
-      set({ videos: results.map(r => r.data), loading: false });
+      const data = results.map(r => r.data);
+      if (data.some(d => !d || typeof d !== 'object' || !d.id)) throw new Error('Received an invalid response from the server.');
+      set({ videos: data, loading: false });
     } catch (err: any) {
-      set({ error: err.response?.data?.error || 'Failed to compare videos', loading: false });
+      set({ error: err.response?.data?.error || err.message || 'Failed to compare videos', loading: false });
     }
   },
   compareChannels: async (ids, apiKey) => {
@@ -37,9 +39,11 @@ export const useCompareStore = create<CompareState>((set) => ({
           axios.post('/api/channel/analyze', { channelId: id, apiKey })
         )
       );
-      set({ channels: results.map(r => r.data), loading: false });
+      const data = results.map(r => r.data);
+      if (data.some(d => !d || typeof d !== 'object' || !d.id)) throw new Error('Received an invalid response from the server.');
+      set({ channels: data, loading: false });
     } catch (err: any) {
-      set({ error: err.response?.data?.error || 'Failed to compare channels', loading: false });
+      set({ error: err.response?.data?.error || err.message || 'Failed to compare channels', loading: false });
     }
   },
   clear: () => set({ videos: [], channels: [], error: null })

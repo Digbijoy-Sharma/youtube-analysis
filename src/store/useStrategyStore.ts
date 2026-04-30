@@ -37,18 +37,22 @@ export const useStrategyStore = create<StrategyState>((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await axios.post('/api/keywords/search', { query: niche, apiKey });
-      set({ suggestions: response.data, loading: false });
+      const data = response.data;
+      if (!Array.isArray(data)) throw new Error('Received an invalid response from the server.');
+      set({ suggestions: data, loading: false });
     } catch (err: any) {
-      set({ error: err.response?.data?.error || 'Failed to generate topics', loading: false });
+      set({ error: err.response?.data?.error || err.message || 'Failed to generate topics', loading: false });
     }
   },
   fetchTrends: async (category, apiKey) => {
     set({ loading: true, error: null });
     try {
       const response = await axios.post('/api/keywords/search', { query: `trending ${category} youtube titles`, apiKey });
-      set({ trends: response.data, loading: false });
+      const data = response.data;
+      if (!Array.isArray(data)) throw new Error('Received an invalid response from the server.');
+      set({ trends: data, loading: false });
     } catch (err: any) {
-      set({ error: err.response?.data?.error || 'Failed to fetch trends', loading: false });
+      set({ error: err.response?.data?.error || err.message || 'Failed to fetch trends', loading: false });
     }
   },
   analyzePatterns: async (handle, apiKey) => {

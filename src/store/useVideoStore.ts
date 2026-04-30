@@ -27,6 +27,12 @@ export const useVideoStore = create<VideoState>((set) => ({
     try {
       const response = await axios.post('/api/video/analyze', { videoUrl, apiKey });
       const data = response.data;
+      
+      // Prevent crash if the server returns HTML instead of JSON (e.g. Vercel SPA routing)
+      if (!data || typeof data !== 'object' || !data.id) {
+        throw new Error('Received an invalid response from the server. The API might not be running correctly.');
+      }
+
       set((state) => ({ 
         currentVideo: data,
         recentAnalyses: [data, ...state.recentAnalyses.filter(v => v.id !== data.id)].slice(0, 10),
@@ -34,7 +40,7 @@ export const useVideoStore = create<VideoState>((set) => ({
       }));
       return data;
     } catch (err: any) {
-      const errorMsg = err.response?.data?.error || 'Failed to analyze video';
+      const errorMsg = err.response?.data?.error || err.message || 'Failed to analyze video';
       set({ error: errorMsg, loading: false });
       return null;
     }

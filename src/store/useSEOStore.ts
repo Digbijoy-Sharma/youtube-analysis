@@ -19,9 +19,11 @@ export const useSEOStore = create<SEOState>((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await axios.post('/api/keywords/search', { query, apiKey });
-      set({ keywordResults: response.data, loading: false });
+      const data = response.data;
+      if (!Array.isArray(data)) throw new Error('Received an invalid response from the server.');
+      set({ keywordResults: data, loading: false });
     } catch (err: any) {
-      set({ error: err.response?.data?.error || 'Failed to search keywords', loading: false });
+      set({ error: err.response?.data?.error || err.message || 'Failed to search keywords', loading: false });
     }
   },
   setTags: (tags) => set({ analyzedTags: tags })

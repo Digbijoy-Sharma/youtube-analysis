@@ -105,4 +105,12 @@ async function startServer() {
   });
 }
 
-startServer();
+// Only start the server directly if not running in a Vercel serverless environment
+if (!process.env.VERCEL) {
+  startServer();
+} else {
+  // If in Vercel, just attach the error handler
+  app.use(errorHandler);
+}
+
+export default app;

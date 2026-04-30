@@ -28,17 +28,21 @@ export const useChannelStore = create<ChannelState>((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await axios.post('/api/channel/analyze', { channelId, apiKey });
-      set({ currentChannel: response.data, loading: false });
-      return response.data;
+      const data = response.data;
+      if (!data || typeof data !== 'object' || !data.id) throw new Error('Received an invalid response from the server.');
+      set({ currentChannel: data, loading: false });
+      return data;
     } catch (err: any) {
-      set({ error: err.response?.data?.error || 'Failed to analyze channel', loading: false });
+      set({ error: err.response?.data?.error || err.message || 'Failed to analyze channel', loading: false });
       return null;
     }
   },
   fetchVideos: async (channelId, apiKey) => {
     try {
       const response = await axios.post('/api/channel/videos', { channelId, apiKey });
-      set({ channelVideos: response.data });
+      const data = response.data;
+      if (!Array.isArray(data)) throw new Error('Received an invalid response from the server.');
+      set({ channelVideos: data });
     } catch (err: any) {
       console.error('Failed to fetch channel videos', err);
     }
