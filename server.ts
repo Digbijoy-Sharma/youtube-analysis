@@ -8,6 +8,9 @@ import { errorHandler } from './server/middleware/errorHandler.js';
 
 dotenv.config();
 
+// Fix for UNABLE_TO_GET_ISSUER_CERT_LOCALLY in this environment
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
