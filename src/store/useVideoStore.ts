@@ -40,7 +40,8 @@ export const useVideoStore = create<VideoState>((set) => ({
       }));
       return data;
     } catch (err: any) {
-      const errorMsg = err.response?.data?.error || err.message || 'Failed to analyze video';
+      const errorData = err.response?.data?.error;
+      const errorMsg = typeof errorData === 'string' ? errorData : (errorData?.message || err.message || 'Failed to analyze video');
       set({ error: errorMsg, loading: false });
       return null;
     }

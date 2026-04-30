@@ -23,7 +23,9 @@ export const useSEOStore = create<SEOState>((set) => ({
       if (!Array.isArray(data)) throw new Error('Received an invalid response from the server.');
       set({ keywordResults: data, loading: false });
     } catch (err: any) {
-      set({ error: err.response?.data?.error || err.message || 'Failed to search keywords', loading: false });
+      const errorData = err.response?.data?.error;
+      const errorMsg = typeof errorData === 'string' ? errorData : (errorData?.message || err.message || 'Failed to search keywords');
+      set({ error: errorMsg, loading: false });
     }
   },
   setTags: (tags) => set({ analyzedTags: tags })

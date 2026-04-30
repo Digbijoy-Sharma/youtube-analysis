@@ -33,7 +33,9 @@ export const useChannelStore = create<ChannelState>((set) => ({
       set({ currentChannel: data, loading: false });
       return data;
     } catch (err: any) {
-      set({ error: err.response?.data?.error || err.message || 'Failed to analyze channel', loading: false });
+      const errorData = err.response?.data?.error;
+      const errorMsg = typeof errorData === 'string' ? errorData : (errorData?.message || err.message || 'Failed to analyze channel');
+      set({ error: errorMsg, loading: false });
       return null;
     }
   },

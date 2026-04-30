@@ -41,7 +41,9 @@ export const useStrategyStore = create<StrategyState>((set) => ({
       if (!Array.isArray(data)) throw new Error('Received an invalid response from the server.');
       set({ suggestions: data, loading: false });
     } catch (err: any) {
-      set({ error: err.response?.data?.error || err.message || 'Failed to generate topics', loading: false });
+      const errorData = err.response?.data?.error;
+      const errorMsg = typeof errorData === 'string' ? errorData : (errorData?.message || err.message || 'Failed to generate topics');
+      set({ error: errorMsg, loading: false });
     }
   },
   fetchTrends: async (category, apiKey) => {
@@ -52,7 +54,9 @@ export const useStrategyStore = create<StrategyState>((set) => ({
       if (!Array.isArray(data)) throw new Error('Received an invalid response from the server.');
       set({ trends: data, loading: false });
     } catch (err: any) {
-      set({ error: err.response?.data?.error || err.message || 'Failed to fetch trends', loading: false });
+      const errorData = err.response?.data?.error;
+      const errorMsg = typeof errorData === 'string' ? errorData : (errorData?.message || err.message || 'Failed to fetch trends');
+      set({ error: errorMsg, loading: false });
     }
   },
   analyzePatterns: async (handle, apiKey) => {

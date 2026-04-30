@@ -20,7 +20,9 @@ export const useCommentStore = create<CommentState>((set) => ({
       if (!data || typeof data !== 'object' || !data.threads) throw new Error('Received an invalid response from the server.');
       set({ analysis: data, loading: false });
     } catch (err: any) {
-      set({ error: err.response?.data?.error || err.message || 'Failed to analyze comments', loading: false });
+      const errorData = err.response?.data?.error;
+      const errorMsg = typeof errorData === 'string' ? errorData : (errorData?.message || err.message || 'Failed to analyze comments');
+      set({ error: errorMsg, loading: false });
     }
   }
 }));

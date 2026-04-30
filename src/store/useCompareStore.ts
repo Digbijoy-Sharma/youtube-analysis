@@ -28,7 +28,9 @@ export const useCompareStore = create<CompareState>((set) => ({
       if (data.some(d => !d || typeof d !== 'object' || !d.id)) throw new Error('Received an invalid response from the server.');
       set({ videos: data, loading: false });
     } catch (err: any) {
-      set({ error: err.response?.data?.error || err.message || 'Failed to compare videos', loading: false });
+      const errorData = err.response?.data?.error;
+      const errorMsg = typeof errorData === 'string' ? errorData : (errorData?.message || err.message || 'Failed to compare videos');
+      set({ error: errorMsg, loading: false });
     }
   },
   compareChannels: async (ids, apiKey) => {
@@ -43,7 +45,9 @@ export const useCompareStore = create<CompareState>((set) => ({
       if (data.some(d => !d || typeof d !== 'object' || !d.id)) throw new Error('Received an invalid response from the server.');
       set({ channels: data, loading: false });
     } catch (err: any) {
-      set({ error: err.response?.data?.error || err.message || 'Failed to compare channels', loading: false });
+      const errorData = err.response?.data?.error;
+      const errorMsg = typeof errorData === 'string' ? errorData : (errorData?.message || err.message || 'Failed to compare channels');
+      set({ error: errorMsg, loading: false });
     }
   },
   clear: () => set({ videos: [], channels: [], error: null })
